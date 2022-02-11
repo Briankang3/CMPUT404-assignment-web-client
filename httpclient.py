@@ -108,9 +108,14 @@ class HTTPClient(object):
         if len(path)==0:
             path="/"
         
-        send_body=None
+        
+        send_body=""
         if args is not None:
-            send_body=urllib.parse.urlencode(args)
+            for key,value in args.items():
+                send_body+= key + "=" + value + "&"
+
+            send_body=send_body[:-1]
+            
         
         self.connect(host, port)
         
@@ -118,7 +123,7 @@ class HTTPClient(object):
         to_send+="Host: " + host + "\r\n"
         to_send+="Connection: closed\r\n"
         
-        if send_body!=None:
+        if len(send_body)>0:
             to_send+="Content-Type: application/x-www-form-urlencoded\r\n"
             to_send+="Content-Length: "+str(len(send_body)) +"\r\n\r\n"
             to_send+=send_body+"\r\n"
